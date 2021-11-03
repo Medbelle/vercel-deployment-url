@@ -1,6 +1,6 @@
+const fetch = require("node-fetch");
 const core = require("@actions/core");
 const { Octokit } = require("@octokit/rest");
-const fetch = require("node-fetch");
 
 const DEPLOYMENT_SEARCH_INTERVAL = 5;
 const DEPLOYMENT_READY_INTERVAL = 30;
@@ -43,7 +43,7 @@ async function main() {
 
     console.log(`Searching for deployments related to commit ${commitSha}.`);
     const { deployments } = await api(
-      `/v5/now/deployments?${
+      `/v6/now/deployments?${
         teamId ? `teamId=${teamId}&` : ""
       }projectId=${projectId}&meta-githubCommitSha=${commitSha}`
     );
@@ -108,6 +108,8 @@ async function main() {
         return deployment;
       case "ERROR":
         throw new Error("The Vercel deployment did not succeed.");
+      case "CANCELED":
+        return
       case "QUEUED":
       case "BUILDING":
       default:
@@ -137,7 +139,11 @@ async function main() {
     deployment,
     readyRetries
   );
-  core.setOutput("url", readyDeployment.url);
+
+  if (readyDeployment && readyDeployment.url) {
+    console.log(`The deployment is ready under ${readyDeployment.url}.`);
+    core.setOutput("url", readyDeployment.url);
+  }
 }
 
 main().catch((error) => {
