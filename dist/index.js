@@ -33471,11 +33471,13 @@ async function main() {
   }
 
   async function waitForDeploymentToBeReady(deployment, retries) {
+    console.log("check if ready!!!")
     if (typeof retries !== "number" || retries <= 0) {
       throw new Error(
         "The Vercel deployment is still not ready after running out of retries."
       );
     }
+    console.log("deployment.readyState", deployment.readyState)
     switch (deployment.readyState) {
       case "READY":
         console.log(`The deployment is ready under ${deployment.url}.`);
