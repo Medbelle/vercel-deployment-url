@@ -33515,17 +33515,19 @@ async function main() {
     readyRetries
   );
 
+  console.log("check if ready")
+
   if (readyDeployment && readyDeployment.url) {
     console.log(`The deployment is ready under ${readyDeployment.url}.`);
     core.info("url:", readyDeployment.url);
     core.info("id:", readyDeployment.id);
     core.info("name:", readyDeployment.name);
-    core.info("branch:", readyDeployment.gitSource.ref);
+    core.info("branch:", readyDeployment.gitSource?.ref);
     
     core.setOutput("url", readyDeployment.url);
     core.setOutput("id", readyDeployment.id);
     core.setOutput("name", readyDeployment.name);
-    core.setOutput("branchName", readyDeployment.gitSource.ref);
+    core.setOutput("branchName", readyDeployment.gitSource?.ref);
   }
 }
 
