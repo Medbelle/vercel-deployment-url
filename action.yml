@@ -24,6 +24,10 @@ inputs:
 outputs:
   url:
     description: "The URL of the vercel preview deployment"
+  id:
+    description: "The ID of the vercel preview deployment"
+  name:
+    description: "The Name of the vercel preview deployment"
 runs:
   using: "node12"
   main: "dist/index.js"
