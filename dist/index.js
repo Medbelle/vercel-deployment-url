@@ -33454,7 +33454,9 @@ async function main() {
         repo,
         ref: commitSha,
       });
+      const x = commit.data.parents[1];
       if (commit.data.parents[1]) {
+        
         return findDeployment(
           commit.data.parents[1].sha,
           numberOfRecursiveCalls + 1
@@ -33516,10 +33518,12 @@ async function main() {
     core.info("url:", readyDeployment.url);
     core.info("id:", readyDeployment.id);
     core.info("name:", readyDeployment.name);
+    core.info("branch:", readyDeployment.meta?.githubCommitRef);
     
     core.setOutput("url", readyDeployment.url);
     core.setOutput("id", readyDeployment.id);
     core.setOutput("name", readyDeployment.name);
+    core.setOutput("branchName", readyDeployment.meta?.githubCommitRef);
   }
 }
 

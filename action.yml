@@ -28,6 +28,8 @@ outputs:
     description: "The ID of the vercel preview deployment"
   name:
     description: "The Name of the vercel preview deployment"
+  branchName:
+    description: "The BranchName"
 runs:
   using: "node12"
   main: "dist/index.js"
