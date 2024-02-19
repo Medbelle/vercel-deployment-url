@@ -33509,14 +33509,14 @@ async function main() {
     );
   }
 
-  console.log("found a deployment!")
+  console.log("found a deployment!", deployment.url)
 
   const readyDeployment = await waitForDeploymentToBeReady(
     deployment,
     readyRetries
   );
 
-  console.log("check if ready")
+  console.log("check if ready", !!readyDeployment, readyDeployment.url)
 
   if (readyDeployment && readyDeployment.url) {
     console.log(`The deployment is ready under ${readyDeployment.url}.`);
