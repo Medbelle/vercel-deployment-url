@@ -33425,6 +33425,8 @@ async function main() {
           deployments.length > 1 ? "s" : ""
         }, using the latest one.`
       );
+      console.log("uuid of deployment is", deployments[0].uid)
+      console.log("url of deployment is", deployments[0].url)
       return api(
         `/v13/deployments/${deployments[0].uid}${
           teamId ? `?teamId=${teamId}&withGitRepoInfo=true&` : ""
