@@ -33456,7 +33456,6 @@ async function main() {
         repo,
         ref: commitSha,
       });
-      const x = commit.data.parents[1];
       if (commit.data.parents[1]) {
         
         return findDeployment(
@@ -33509,6 +33508,8 @@ async function main() {
       `Could not find any Vercel deployments for the commit with SHA ${commitSha}.`
     );
   }
+
+  console.log("found a deployment!")
 
   const readyDeployment = await waitForDeploymentToBeReady(
     deployment,
