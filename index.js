@@ -55,8 +55,8 @@ async function main() {
         }, using the latest one.`
       );
       return api(
-        `/v11/now/deployments/${deployments[0].uid}${
-          teamId ? `?teamId=${teamId}&` : ""
+        `/v13/deployments/${deployments[0].uid}${
+          teamId ? `?teamId=${teamId}&withGitRepoInfo=true&` : ""
         }`
       );
     }
@@ -120,8 +120,8 @@ async function main() {
         );
         await wait(DEPLOYMENT_READY_INTERVAL);
         const updatedDeployment = await api(
-          `/v11/now/deployments/${deployment.id}${
-            teamId ? `?teamId=${teamId}&` : ""
+          `/v13/deployments/${deployment.id}${
+            teamId ? `?teamId=${teamId}&withGitRepoInfo=true&` : ""
           }`
         );
         return waitForDeploymentToBeReady(updatedDeployment, retries - 1);
@@ -147,12 +147,12 @@ async function main() {
     core.info("url:", readyDeployment.url);
     core.info("id:", readyDeployment.id);
     core.info("name:", readyDeployment.name);
-    core.info("branch:", readyDeployment.meta?.githubCommitRef);
+    core.info("branch:", readyDeployment.gitSource.ref);
     
     core.setOutput("url", readyDeployment.url);
     core.setOutput("id", readyDeployment.id);
     core.setOutput("name", readyDeployment.name);
-    core.setOutput("branchName", readyDeployment.meta?.githubCommitRef);
+    core.setOutput("branchName", readyDeployment.gitSource.ref);
   }
 }
 
