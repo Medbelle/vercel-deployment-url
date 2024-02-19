@@ -144,6 +144,7 @@ async function main() {
     console.log(`The deployment is ready under ${readyDeployment.url}.`);
     core.setOutput("url", readyDeployment.url);
     core.setOutput("id", readyDeployment.id);
+    core.setOutput("name", readyDeployment.name);
   }
 }
 
