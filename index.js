@@ -143,6 +143,7 @@ async function main() {
   if (readyDeployment && readyDeployment.url) {
     console.log(`The deployment is ready under ${readyDeployment.url}.`);
     core.setOutput("url", readyDeployment.url);
+    core.setOutput("id", readyDeployment.id);
   }
 }
 
