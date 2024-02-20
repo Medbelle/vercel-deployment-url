@@ -33502,7 +33502,7 @@ async function main() {
     }
   }
 
-  const commitSha = process.env.GITHUB_SHA;
+  const commitSha = process.env.TARGET_COMMIT || process.env.GITHUB_SHA;
 
   const deployment = await findDeployment(commitSha, 0);
   if (!deployment) {
