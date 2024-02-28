@@ -36,6 +36,29 @@ async function main() {
     return json;
   }
 
+  async function findLatestSuccessfulDeployment(branchName) {
+    const { deployments } = await api(
+      `/v6/now/deployments?${
+        teamId ? `teamId=${teamId}&` : ""
+      }projectId=${projectId}&state=READY&meta-githubCommitRef=${branchName}&limit=1`
+    );
+
+    if (Array.isArray(deployments) && deployments.length > 0) {
+      console.log(
+        `Found ${deployments.length} deployment${
+          deployments.length > 1 ? "s" : ""
+        }, using the latest one.`
+      );
+      return api(
+        `/v13/deployments/${deployments[0].uid}${
+          teamId ? `?teamId=${teamId}&withGitRepoInfo=true&` : ""
+        }`
+      );
+    } else {
+      return null
+    }
+  }
+
   async function findLatestDeployment(commitSha, retries) {
     if (typeof retries !== "number" || retries <= 0) {
       return null;
@@ -54,8 +77,6 @@ async function main() {
           deployments.length > 1 ? "s" : ""
         }, using the latest one.`
       );
-      console.log("uuid of deployment is", deployments[0].uid)
-      console.log("url of deployment is", deployments[0].url)
       return api(
         `/v13/deployments/${deployments[0].uid}${
           teamId ? `?teamId=${teamId}&withGitRepoInfo=true&` : ""
@@ -99,8 +120,10 @@ async function main() {
     }
   }
 
+  const commitSha = process.env.TARGET_COMMIT || process.env.GITHUB_SHA;
+  const targetBranchName = process.env.TARGET_BRANCH;
+
   async function waitForDeploymentToBeReady(deployment, retries) {
-    console.log("check if ready!!!")
     if (typeof retries !== "number" || retries <= 0) {
       throw new Error(
         "The Vercel deployment is still not ready after running out of retries."
@@ -114,7 +137,10 @@ async function main() {
       case "ERROR":
         throw new Error("The Vercel deployment did not succeed.");
       case "CANCELED":
-        return
+        // If the deployment was canceled and there's a target github branch name in environment
+        // we will check if there is a previous successful deployment
+        const previousDeployment = targetBranchName ? await findLatestSuccessfulDeployment(targetBranchName) : null
+        return previousDeployment
       case "QUEUED":
       case "BUILDING":
       default:
@@ -131,8 +157,6 @@ async function main() {
     }
   }
 
-  const commitSha = process.env.TARGET_COMMIT || process.env.GITHUB_SHA;
-
   const deployment = await findDeployment(commitSha, 0);
   if (!deployment) {
     throw new Error(
@@ -140,14 +164,10 @@ async function main() {
     );
   }
 
-  console.log("found a deployment!", deployment.url)
-
   const readyDeployment = await waitForDeploymentToBeReady(
     deployment,
     readyRetries
   );
-
-  console.log("check if ready", !!readyDeployment, readyDeployment.url)
 
   if (readyDeployment && readyDeployment.url) {
     console.log(`The deployment is ready under ${readyDeployment.url}.`);
