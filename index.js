@@ -115,7 +115,7 @@ async function main() {
       }
       return null;
     } catch (error) {
-      console.error(error);
+      console.error("there was an error", error);
       return null;
     }
   }
